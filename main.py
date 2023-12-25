@@ -20,7 +20,7 @@ parser.add_argument('--nb_classes', default=10, type=int, help='number of the cl
 parser.add_argument('--load_local', action='store_true', help='train model or directly load model (default true, if you add this param, then load trained local model to evaluate the performance)')
 parser.add_argument('--loss', default='mse', help='Which loss function to use (mse or cross, default: mse)')
 parser.add_argument('--optimizer', default='sgd', help='Which optimizer to use (sgd or adam, default: sgd)')
-parser.add_argument('--epochs', default=100, help='Number of epochs to train backdoor model, default: 100')
+parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train backdoor model, default: 100')
 parser.add_argument('--batch_size', type=int, default=64, help='Batch size to split dataset, default: 64')
 parser.add_argument('--num_workers', type=int, default=0, help='Batch size to split dataset, default: 64')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning rate of the model, default: 0.001')
