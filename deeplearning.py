@@ -48,7 +48,7 @@ def evaluate_badnets_ood(data_loader_val_clean, data_loader_val_poisoned, model,
     asr = ood_eval(data_loader_val_poisoned, model, device, print_perform=False)
     return {
             'clean_auc': ta['auc'], 'clean_loss': ta['loss'],
-            'adv_auc': asr['acc'], 'asr_loss': asr['loss'],
+            'adv_auc': asr['auc'], 'asr_loss': asr['loss'],
             }
 
 def ood_eval(data_loader, model, device, batch_size=64, print_perform=False):

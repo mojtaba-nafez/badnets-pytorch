@@ -82,7 +82,7 @@ def main():
             ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
 
             print(f"# EPOCH {epoch}   loss: {train_stats['loss']:.4f} Test Acc: {test_stats['clean_acc']:.4f}, ASR: {test_stats['asr']:.4f}\n")
-            print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_auc']:.4f}")
+            print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_auc']:.4f} -- Test ADV AUC(ASR): {ood_test_stats['adv_auc']:.4f}")
 
             # save model 
             torch.save(model.state_dict(), basic_model_path)
