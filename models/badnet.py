@@ -22,8 +22,8 @@ class VIT_BadNet(torch.nn.Module):
         super().__init__()
         # self.norm = lambda x: (x - mu) / std
         self.backbone = models.vit_b_16(pretrained=pretrained)
-        self.backbone.fc = torch.nn.Identity()
-        self.output = torch.nn.Linear(2048, output_num)
+        self.backbone.heads = torch.nn.Identity()
+        self.output = torch.nn.Linear(748, output_num)
 
     def forward(self, x):
         # x = self.norm(x)
