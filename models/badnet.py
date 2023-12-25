@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
 
-class BadNet(torch.nn.Module):
+class Resent18_BadNet(torch.nn.Module):
     def __init__(self, output_num=10, pretrained=True):
         super().__init__()
         # self.norm = lambda x: (x - mu) / std
@@ -17,10 +17,23 @@ class BadNet(torch.nn.Module):
         # z_n = F.normalize(z1, dim=-1)
         return self.output(x)
 
+class VIT_BadNet(torch.nn.Module):
+    def __init__(self, output_num=10, pretrained=True):
+        super().__init__()
+        # self.norm = lambda x: (x - mu) / std
+        self.backbone = models.vit_b_16(pretrained=pretrained)
+        self.backbone.fc = torch.nn.Identity()
+        self.output = torch.nn.Linear(2048, output_num)
+
+    def forward(self, x):
+        # x = self.norm(x)
+        x = self.backbone(x)
+        # z_n = F.normalize(z1, dim=-1)
+        return self.output(x)
 
 
-'''
-class BadNet(nn.Module):
+
+class Conv_BadNet(nn.Module):
 
     def __init__(self, input_channels, output_num):
         super().__init__()
@@ -54,4 +67,13 @@ class BadNet(nn.Module):
         x = self.fc1(x)
         x = self.fc2(x)
         return x
-'''
+
+def BadNet(self, input_channels, output_num, model='resnet18'):
+    if model=='resnet18':
+        model = Resent18_BadNet(output_num=output_num).to(device)
+    elif model=='vit':
+        model = VIT_BadNet(output_num=output_num).to(device)
+    elif model=='simple_conv':
+        model = Conv_BadNet(output_num=output_num).to(device)
+    return model
+

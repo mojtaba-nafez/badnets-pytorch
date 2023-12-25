@@ -13,7 +13,7 @@ def build_init_data(dataname, download, dataset_path):
     return train_data, test_data
 
 def build_poisoned_training_set(is_train, args):
-    transform, detransform = build_transform(args.dataset)
+    transform, detransform = build_transform(args.dataset, args.model)
     print("Transform = ", transform)
 
     if args.dataset == 'CIFAR10':
@@ -33,7 +33,7 @@ def build_poisoned_training_set(is_train, args):
 
 
 def build_testset(is_train, args):
-    transform, detransform = build_transform(args.dataset)
+    transform, detransform = build_transform(args.dataset, args.model)
     print("Transform = ", transform)
 
     if args.dataset == 'CIFAR10':
@@ -53,12 +53,22 @@ def build_testset(is_train, args):
 
     return testset_clean, testset_poisoned
 
-def build_transform(dataset):
+def build_transform(dataset, model):
     if dataset == "CIFAR10":
-        mean = (0.485, 0.456, 0.406)
-        std = (0.229, 0.224, 0.225)
-        # mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
+        if model=='resnet18':
+            mean = (0.485, 0.456, 0.406)
+            std = (0.229, 0.224, 0.225)
+        elif model=='vit':
+            mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
+        elif model=='simple_conv':
+            mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
     elif dataset == "MNIST":
+        if model=='resnet18':
+            mean = (0.485, 0.456, 0.406)
+            std = (0.229, 0.224, 0.225)
+        elif model=='vit':
+            mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
+        elif model=='simple_conv':
         mean, std = (0.5,), (0.5,)
     else:
         raise NotImplementedError()

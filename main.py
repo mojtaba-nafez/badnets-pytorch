@@ -15,6 +15,7 @@ from models import BadNet
 
 parser = argparse.ArgumentParser(description='Reproduce the basic backdoor attack in "Badnets: Identifying vulnerabilities in the machine learning model supply chain".')
 parser.add_argument('--dataset', default='MNIST', help='Which dataset to use (MNIST or CIFAR10, default: MNIST)')
+parser.add_argument('--model', default='resnet18', help='resnet18, vit, simple_conv')
 parser.add_argument('--nb_classes', default=10, type=int, help='number of the classification types')
 parser.add_argument('--load_local', action='store_true', help='train model or directly load model (default true, if you add this param, then load trained local model to evaluate the performance)')
 parser.add_argument('--loss', default='mse', help='Which loss function to use (mse or cross, default: mse)')
@@ -54,7 +55,7 @@ def main():
     data_loader_val_clean    = DataLoader(dataset_val_clean,     batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
     data_loader_val_poisoned = DataLoader(dataset_val_poisoned,  batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers) # shuffle 随机化
 
-    model = BadNet(output_num=args.nb_classes).to(device)
+    model = BadNet(output_num=args.nb_classes, model=args.model).to(device)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optimizer_picker(args.optimizer, model.parameters(), lr=args.lr)
 
