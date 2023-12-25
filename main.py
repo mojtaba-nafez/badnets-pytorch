@@ -73,7 +73,7 @@ def main():
         for epoch in range(args.epochs):
             # train_stats = train_one_epoch(data_loader_train, model, criterion, optimizer, args.loss, device)
             test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
-            print(f"# EPOCH {epoch}   loss: {train_stats['loss']:.4f} Test Acc: {test_stats['clean_acc']:.4f}, ASR: {test_stats['asr']:.4f}\n")
+            print(f"# EPOCH {epoch}    Test Acc: {test_stats['clean_acc']:.4f}, ASR: {test_stats['asr']:.4f}\n")
             
             # save model 
             torch.save(model.state_dict(), basic_model_path)
