@@ -69,7 +69,7 @@ def build_transform(dataset, model):
         elif model=='vit':
             mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
         elif model=='simple_conv':
-        mean, std = (0.5,), (0.5,)
+            mean, std = (0.5,), (0.5,)
     else:
         raise NotImplementedError()
 
