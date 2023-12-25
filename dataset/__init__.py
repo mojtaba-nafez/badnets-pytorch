@@ -63,6 +63,7 @@ def build_transform(dataset):
 
     transform = transforms.Compose([
         transforms.ToTensor(),
+        transforms.Resize((224, 224)),
         transforms.Normalize(mean, std)
         ])
     mean = torch.as_tensor(mean)
