@@ -65,7 +65,7 @@ def ood_eval(data_loader, model, device, batch_size=64, print_perform=False):
         loss = criterion(batch_y_predict, batch_y)
         batch_y_predict = torch.max(batch_y_predict, dim=1)
         y_true.append(batch_y)
-        y_predict.append(batch_y_predict.detach().cpu())
+        y_predict.append(batch_y_predict)
         loss_sum.append(loss.item())
     
     y_true = torch.cat(y_true,0)
