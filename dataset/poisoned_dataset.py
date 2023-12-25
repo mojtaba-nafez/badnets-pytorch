@@ -2,7 +2,7 @@ import random
 from typing import Callable, Optional
 
 from PIL import Image
-from torchvision.datasets import CIFAR10, MNIST
+from torchvision.datasets import CIFAR10, MNIST, CIFAR100
 import os 
 
 class TriggerHandler(object):
