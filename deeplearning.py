@@ -68,8 +68,8 @@ def ood_eval(data_loader, model, device, batch_size=64, print_perform=False):
         y_predict.append(batch_y_predict)
         loss_sum.append(loss.item())
     
-    y_true = torch.cat(y_true,0)
-    y_predict = torch.cat(y_predict,0)
+    preds = torch.cat(preds).numpy()
+    targs = torch.cat(targs).numpy()
 
     fpr, tpr, thresholds = metrics.roc_curve(y_true, y_predict)
     auc = metrics.auc(fpr, tpr)
