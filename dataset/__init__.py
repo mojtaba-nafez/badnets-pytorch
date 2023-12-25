@@ -55,7 +55,9 @@ def build_testset(is_train, args):
 
 def build_transform(dataset):
     if dataset == "CIFAR10":
-        mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
+        mean = (0.485, 0.456, 0.406)
+        std = (0.229, 0.224, 0.225)
+        # mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
     elif dataset == "MNIST":
         mean, std = (0.5,), (0.5,)
     else:
