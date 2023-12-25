@@ -1,6 +1,7 @@
 import torch
 from sklearn.metrics import accuracy_score, classification_report
 from tqdm import tqdm
+from sklearn import metrics
 
 
 def optimizer_picker(optimization, param, lr):
