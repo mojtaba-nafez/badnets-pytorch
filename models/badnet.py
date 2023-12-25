@@ -74,6 +74,6 @@ def BadNet(input_channels, output_num, model='resnet18'):
     elif model=='vit':
         model = VIT_BadNet(output_num=output_num).to(device)
     elif model=='simple_conv':
-        model = Conv_BadNet(output_num=output_num).to(device)
+        model = Conv_BadNet(input_channels=input_channels, output_num=output_num).to(device)
     return model
 
