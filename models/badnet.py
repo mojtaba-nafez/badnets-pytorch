@@ -3,13 +3,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
 
-class Model(torch.nn.Module):
-    def __init__(self, pretrained=True):
+class BadNet(torch.nn.Module):
+    def __init__(self, output_num=10, pretrained=True):
         super().__init__()
         # self.norm = lambda x: (x - mu) / std
         self.backbone = models.resnet18(pretrained=pretrained)
         self.backbone.fc = torch.nn.Identity()
-        self.output = torch.nn.Linear(512, 10)
+        self.output = torch.nn.Linear(512, output_num)
 
     def forward(self, x):
         # x = self.norm(x)
