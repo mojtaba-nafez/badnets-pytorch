@@ -68,7 +68,7 @@ class Conv_BadNet(nn.Module):
         x = self.fc2(x)
         return x
 
-def BadNet(self, input_channels, output_num, model='resnet18'):
+def BadNet(input_channels, output_num, model='resnet18'):
     if model=='resnet18':
         model = Resent18_BadNet(output_num=output_num).to(device)
     elif model=='vit':
