@@ -21,7 +21,7 @@ parser.add_argument('--load_local', action='store_true', help='train model or di
 parser.add_argument('--loss', default='mse', help='Which loss function to use (mse or cross, default: mse)')
 parser.add_argument('--optimizer', default='sgd', help='Which optimizer to use (sgd or adam, default: sgd)')
 parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train backdoor model, default: 100')
-parser.add_argument('--batch_size', type=int, default=32, help='Batch size to split dataset, default: 64')
+parser.add_argument('--batch_size', type=int, default=64, help='Batch size to split dataset, default: 64')
 parser.add_argument('--num_workers', type=int, default=0, help='Batch size to split dataset, default: 64')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning rate of the model, default: 0.001')
 parser.add_argument('--download', action='store_true', help='Do you want to download data ( default false, if you add this param, then download)')
