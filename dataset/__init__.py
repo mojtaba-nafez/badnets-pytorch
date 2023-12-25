@@ -1,4 +1,4 @@
-from .poisoned_dataset import CIFAR10Poison, MNISTPoison
+from .poisoned_dataset import CIFAR10Poison, MNISTPoison, CIFAR100Poison
 from torchvision import datasets, transforms
 import torch 
 import os 
@@ -83,3 +83,29 @@ def build_transform(dataset, model):
     detransform = transforms.Normalize((-mean / std).tolist(), (1.0 / std).tolist()) # you can use detransform to recover the image
     
     return transform, detransform
+
+def build_ood_testset(is_train, args):
+    transform, detransform = build_transform(args.dataset, args.model)
+    print("Transform = ", transform)
+
+    if args.dataset == 'CIFAR10':
+        testset_clean_10 = datasets.CIFAR10(args.data_path, train=is_train, download=True, transform=transform)
+        for i in range(len(testset_clean_10.targets)):
+            testset_clean_10.targets[i] = 1
+        testset_clean_100 = datasets.CIFAR100(args.data_path, train=is_train, download=True, transform=transform)
+        for i in range(len(testset_clean_100.targets)):
+            testset_clean_100.targets[i] = 0
+            
+        testset_clean = torch.utils.data.ConcatDataset([testset_clean_10, testset_clean_100])
+        testset_poisoned_100 = CIFAR100Poison(args, args.data_path, train=is_train, download=True, transform=transform)
+        testset_poisoned = torch.utils.data.ConcatDataset([testset_clean_10, testset_poisoned_100])
+
+        nb_classes = 10
+    elif args.dataset == 'MNIST':
+        testset_clean = datasets.MNIST(args.data_path, train=is_train, download=True, transform=transform)
+        testset_poisoned = MNISTPoison(args, args.data_path, train=is_train, download=True, transform=transform)
+        nb_classes = 10
+    else:
+        raise NotImplementedError()
+    assert nb_classes == args.nb_classes
+    return testset_clean, testset_poisoned

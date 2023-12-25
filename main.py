@@ -9,7 +9,7 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-from dataset import build_poisoned_training_set, build_testset
+from dataset import build_poisoned_training_set, build_testset, build_ood_testset
 from deeplearning import evaluate_badnets, optimizer_picker, train_one_epoch
 from models import BadNet
 
@@ -50,7 +50,11 @@ def main():
     print("\n# load dataset: %s " % args.dataset)
     dataset_train, args.nb_classes = build_poisoned_training_set(is_train=True, args=args)
     dataset_val_clean, dataset_val_poisoned = build_testset(is_train=False, args=args)
-    
+    dataset_val_clean_ood, dataset_val_poisoned_ood = build_ood_testset(is_train=False, args=args)
+
+    data_loader_val_clean_ood    = DataLoader(dataset_val_clean_ood,     batch_size=64, shuffle=True, num_workers=2)
+    data_loader_val_poisoned_ood = DataLoader(dataset_val_poisoned_ood,  batch_size=64, shuffle=True, num_workers=2)
+
     data_loader_train        = DataLoader(dataset_train,         batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
     data_loader_val_clean    = DataLoader(dataset_val_clean,     batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
     data_loader_val_poisoned = DataLoader(dataset_val_poisoned,  batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers) # shuffle 随机化
@@ -65,16 +69,21 @@ def main():
         print("## Load model from : %s" % basic_model_path)
         model.load_state_dict(torch.load(basic_model_path), strict=True)
         test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
-        print(f"Test Clean Accuracy(TCA): {test_stats['clean_acc']:.4f}")
-        print(f"Attack Success Rate(ASR): {test_stats['asr']:.4f}")
+        ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
+        print(f"cifar10 classifer: Test Clean Accuracy(TCA): {test_stats['clean_acc']:.4f}")
+        print(f"cifar10 classifer: Attack Success Rate(ASR): {test_stats['asr']:.4f}")
+         print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_acc']:.4f}")
     else:
         print(f"Start training for {args.epochs} epochs")
         stats = []
         for epoch in range(args.epochs):
             train_stats = train_one_epoch(data_loader_train, model, criterion, optimizer, args.loss, device)
             test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
+            ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
+
             print(f"# EPOCH {epoch}   loss: {train_stats['loss']:.4f} Test Acc: {test_stats['clean_acc']:.4f}, ASR: {test_stats['asr']:.4f}\n")
-            
+            print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_acc']:.4f}")
+
             # save model 
             torch.save(model.state_dict(), basic_model_path)
 

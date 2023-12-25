@@ -42,6 +42,43 @@ def evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, dev
             'asr': asr['acc'], 'asr_loss': asr['loss'],
             }
 
+def evaluate_badnets_ood(data_loader_val_clean, data_loader_val_poisoned, model, device):
+    ta = ood_eval(data_loader_val_clean, model, device, print_perform=True)
+    # asr = ood_eval(data_loader_val_poisoned, model, device, print_perform=False)
+    return {
+            'clean_auc': ta['auc'], 'clean_loss': ta['loss'],
+            # 'asr': asr['acc'], 'asr_loss': asr['loss'],
+            }
+
+def ood_eval(data_loader, model, device, batch_size=64, print_perform=False):
+    criterion = torch.nn.CrossEntropyLoss()
+    model.eval() # switch to eval status
+    y_true = []
+    y_predict = []
+    loss_sum = []
+    for (batch_x, batch_y) in tqdm(data_loader):
+
+        batch_x = batch_x.to(device, non_blocking=True)
+        batch_y = batch_y.to(device, non_blocking=True)
+
+        batch_y_predict = model(batch_x)
+        loss = criterion(batch_y_predict, batch_y)
+        batch_y_predict = torch.max(batch_y_predict, dim=1)
+        y_true.append(batch_y)
+        y_predict.append(batch_y_predict.detach().cpu())
+        loss_sum.append(loss.item())
+    
+    y_true = torch.cat(y_true,0)
+    y_predict = torch.cat(y_predict,0)
+
+    fpr, tpr, thresholds = metrics.roc_curve(y_true, y_predict)
+    auc = metrics.auc(fpr, tpr)
+    loss = sum(loss_sum) / len(loss_sum)
+    return {
+            "auc": auc,
+            "loss": loss,
+            }
+
 def eval(data_loader, model, device, batch_size=64, print_perform=False):
     criterion = torch.nn.CrossEntropyLoss()
     model.eval() # switch to eval status
