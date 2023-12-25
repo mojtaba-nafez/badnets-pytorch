@@ -87,8 +87,8 @@ def eval(data_loader, model, device, batch_size=64, print_perform=False):
     loss_sum = []
     for (batch_x, batch_y) in tqdm(data_loader):
 
-        batch_x = batch_x.to(device, non_blocking=True)
-        batch_y = batch_y.to(device, non_blocking=True)
+        batch_x = batch_x.to(device)
+        batch_y = batch_y.to(device)
 
         batch_y_predict = model(batch_x)
         loss = criterion(batch_y_predict, batch_y)
