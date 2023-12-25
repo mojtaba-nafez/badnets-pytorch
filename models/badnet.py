@@ -70,10 +70,10 @@ class Conv_BadNet(nn.Module):
 
 def BadNet(input_channels, output_num, model='resnet18'):
     if model=='resnet18':
-        model = Resent18_BadNet(output_num=output_num).to(device)
+        model = Resent18_BadNet(output_num=output_num)
     elif model=='vit':
-        model = VIT_BadNet(output_num=output_num).to(device)
+        model = VIT_BadNet(output_num=output_num)
     elif model=='simple_conv':
-        model = Conv_BadNet(input_channels=input_channels, output_num=output_num).to(device)
+        model = Conv_BadNet(input_channels=input_channels, output_num=output_num)
     return model
 
