@@ -18,6 +18,7 @@ def optimizer_picker(optimization, param, lr):
 def train_one_epoch(data_loader, model, criterion, optimizer, loss_mode, device):
     running_loss = 0
     model.train()
+    print(device)
     for step, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
 
         batch_x = batch_x.to(device)
@@ -30,9 +31,9 @@ def train_one_epoch(data_loader, model, criterion, optimizer, loss_mode, device)
 
         loss.backward()
         optimizer.step()
-        running_loss += loss
+        running_loss += loss.item()
     return {
-            "loss": running_loss.item() / len(data_loader),
+            "loss": running_loss / len(data_loader),
             }
 
 def evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device):
