@@ -53,8 +53,8 @@ def main():
     dataset_val_clean, dataset_val_poisoned = build_testset(is_train=False, args=args)
     dataset_val_clean_ood, dataset_val_poisoned_ood = build_ood_testset(is_train=False, args=args)
 
-    data_loader_val_clean_ood    = DataLoader(dataset_val_clean_ood,     batch_size=64, shuffle=True, num_workers=2)
-    data_loader_val_poisoned_ood = DataLoader(dataset_val_poisoned_ood,  batch_size=64, shuffle=True, num_workers=2)
+    data_loader_val_clean_ood    = DataLoader(dataset_val_clean_ood,     batch_size=args.batch_size, shuffle=True, num_workers=2)
+    data_loader_val_poisoned_ood = DataLoader(dataset_val_poisoned_ood,  batch_size=args.batch_size,  shuffle=True, num_workers=2)
 
     data_loader_train        = DataLoader(dataset_train,         batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
     data_loader_val_clean    = DataLoader(dataset_val_clean,     batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
@@ -79,9 +79,12 @@ def main():
         print(f"Start training for {args.epochs} epochs")
         stats = []
         for epoch in range(args.epochs):
+            torch.cuda.empty_cache()
             train_stats = train_one_epoch(data_loader_train, model, criterion, optimizer, args.loss, device)
+            torch.cuda.empty_cache()
             if epoch % args.print_step == 0:
                 test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
+                torch.cuda.empty_cache()
                 ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
                 print(f"# EPOCH {epoch}   loss: {train_stats['loss']:.4f} Test Acc: {test_stats['clean_acc']:.4f}, ASR: {test_stats['asr']:.4f}\n")
                 print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_auc']:.4f} -- Test ADV AUC(ASR): {ood_test_stats['adv_auc']:.4f}")
