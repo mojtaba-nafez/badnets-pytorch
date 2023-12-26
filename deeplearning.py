@@ -20,8 +20,8 @@ def train_one_epoch(data_loader, model, criterion, optimizer, loss_mode, device)
     model.train()
     for step, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
 
-        batch_x = batch_x.to(device, non_blocking=True)
-        batch_y = batch_y.to(device, non_blocking=True)
+        batch_x = batch_x.to(device)
+        batch_y = batch_y.to(device)
 
         optimizer.zero_grad()
         output = model(batch_x) # get predict label of batch_x
@@ -65,10 +65,7 @@ def ood_eval(data_loader, model, device, batch_size=64, print_perform=False):
         batch_y_predict = model(batch_x)
         loss = criterion(batch_y_predict, batch_y)
         batch_y_predict = torch.max(batch_y_predict.detach().cpu(), dim=1).values
-        print("batch_y_predict: ", batch_y_predict)
         y_true.append(batch_y.cpu())
-        print("batch_y: ", batch_y)
-
         y_predict.append(batch_y_predict)
         loss_sum.append(loss.item())
     

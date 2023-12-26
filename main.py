@@ -82,7 +82,8 @@ def main():
             torch.cuda.empty_cache()
             train_stats = train_one_epoch(data_loader_train, model, criterion, optimizer, args.loss, device)
             torch.cuda.empty_cache()
-            if epoch % args.print_step == 0:
+            if False:
+            # if epoch % args.print_step == 0:
                 test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
                 torch.cuda.empty_cache()
                 ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
