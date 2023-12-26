@@ -60,6 +60,7 @@ class CIFAR10Poison(CIFAR10):
         # NOTE: According to the threat model, the trigger should be put on the image before transform.
         # (The attacker can only poison the dataset)
         if index in self.poi_indices:
+            print("Yess!")
             if not self.clean_label:
                 target = self.trigger_handler.trigger_label
             img = self.trigger_handler.put_trigger(img)
