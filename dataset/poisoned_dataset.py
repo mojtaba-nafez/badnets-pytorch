@@ -50,7 +50,7 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
-        print(self.poi_indices)
+        print("++++ self.poi_indices:", self.poi_indices)
 
     def __shape_info__(self):
         return self.data.shape[1:]
