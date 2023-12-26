@@ -36,10 +36,20 @@ class CIFAR10Poison(CIFAR10):
 
         self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         self.poisoning_rate = args.poisoning_rate if train else 1.0
+        '''
         indices = range(len(self.targets))
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
-
+        '''
+        import numpy as np
+        unique_values = np.unique(self.targets)
+        self.poi_indices = []
+        for value in unique_values:
+            indices = list(np.where(self.targets == value)[0])
+            self.poi_indices.append(random.sample(indices, k=int(len(indices) * self.poisoning_rate)))
+        self.poi_indices = np.array(self.poi_indices).flatten().tolist()
+        print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
+        self.clean_label = args.clean_label
 
     def __shape_info__(self):
         return self.data.shape[1:]
@@ -50,7 +60,8 @@ class CIFAR10Poison(CIFAR10):
         # NOTE: According to the threat model, the trigger should be put on the image before transform.
         # (The attacker can only poison the dataset)
         if index in self.poi_indices:
-            target = self.trigger_handler.trigger_label
+            if not args.clean_label:
+                target = self.trigger_handler.trigger_label
             img = self.trigger_handler.put_trigger(img)
 
         if self.transform is not None:

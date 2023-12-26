@@ -33,6 +33,7 @@ parser.add_argument('--trigger_label', type=int, default=1, help='The NO. of tri
 parser.add_argument('--trigger_path', default="./triggers/trigger_white.png", help='Trigger Path (default: ./triggers/trigger_white.png)')
 parser.add_argument('--trigger_size', type=int, default=5, help='Trigger Size (int, default: 5)')
 parser.add_argument('--print_step', type=int, default=2, help='')
+parser.add_argument('--clean_label', action='store_true', help='')
 
 args = parser.parse_args()
 
