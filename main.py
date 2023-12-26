@@ -63,9 +63,9 @@ def main():
     model = BadNet(input_channels=dataset_train.channels, output_num=args.nb_classes, model=args.model).to(device)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optimizer_picker(args.optimizer, model.parameters(), lr=args.lr)
+    basic_model_path = "./checkpoints/badnet-%s.pth" % args.dataset
     torch.save(model.state_dict(), basic_model_path)
 
-    basic_model_path = "./checkpoints/badnet-%s.pth" % args.dataset
     start_time = time.time()
     if args.load_local:
         print("## Load model from : %s" % basic_model_path)
