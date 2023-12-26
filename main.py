@@ -32,6 +32,7 @@ parser.add_argument('--poisoning_rate', type=float, default=0.1, help='poisoning
 parser.add_argument('--trigger_label', type=int, default=1, help='The NO. of trigger label (int, range from 0 to 10, default: 0)')
 parser.add_argument('--trigger_path', default="./triggers/trigger_white.png", help='Trigger Path (default: ./triggers/trigger_white.png)')
 parser.add_argument('--trigger_size', type=int, default=5, help='Trigger Size (int, default: 5)')
+parser.add_argument('--print_step', type=int, default=2, help='')
 
 args = parser.parse_args()
 
@@ -78,24 +79,21 @@ def main():
         stats = []
         for epoch in range(args.epochs):
             train_stats = train_one_epoch(data_loader_train, model, criterion, optimizer, args.loss, device)
-            test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
-            ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
-
-            print(f"# EPOCH {epoch}   loss: {train_stats['loss']:.4f} Test Acc: {test_stats['clean_acc']:.4f}, ASR: {test_stats['asr']:.4f}\n")
-            print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_auc']:.4f} -- Test ADV AUC(ASR): {ood_test_stats['adv_auc']:.4f}")
-
+            if epoch % args.print_step == 0:
+                test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
+                ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
+                print(f"# EPOCH {epoch}   loss: {train_stats['loss']:.4f} Test Acc: {test_stats['clean_acc']:.4f}, ASR: {test_stats['asr']:.4f}\n")
+                print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_auc']:.4f} -- Test ADV AUC(ASR): {ood_test_stats['adv_auc']:.4f}")
+                log_stats = {**{f'train_{k}': v for k, v in train_stats.items()},
+                                **{f'test_{k}': v for k, v in test_stats.items()},
+                                'epoch': epoch,
+                }
+                # save training stats
+                stats.append(log_stats)
+                df = pd.DataFrame(stats)
+                df.to_csv("./logs/%s_trigger%d.csv" % (args.dataset, args.trigger_label), index=False, encoding='utf-8')
             # save model 
             torch.save(model.state_dict(), basic_model_path)
-
-            log_stats = {**{f'train_{k}': v for k, v in train_stats.items()},
-                            **{f'test_{k}': v for k, v in test_stats.items()},
-                            'epoch': epoch,
-            }
-
-            # save training stats
-            stats.append(log_stats)
-            df = pd.DataFrame(stats)
-            df.to_csv("./logs/%s_trigger%d.csv" % (args.dataset, args.trigger_label), index=False, encoding='utf-8')
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
