@@ -18,7 +18,6 @@ def optimizer_picker(optimization, param, lr):
 def train_one_epoch(data_loader, model, criterion, optimizer, loss_mode, device):
     running_loss = 0
     model.train()
-    print(device)
     for step, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
 
         batch_x = batch_x.to(device)
