@@ -71,7 +71,7 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
         '''
         self.poi_indices = list(np.where(self.targets == 1)[0])
-
+        print("self.poi_indices: ", self.poi_indices)
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
