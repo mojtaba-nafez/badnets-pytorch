@@ -60,6 +60,7 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         '''
+        '''
         import numpy as np
         self.poi_indices = list(np.where(np.array(self.targets)==1)[0])
         print("self.poi_indices: ", self.poi_indices)
@@ -71,7 +72,7 @@ class CIFAR10Poison(CIFAR10):
             indices = list(np.where(self.targets == value)[0])
             self.poi_indices.append(random.sample(indices, k=int(len(indices) * self.poisoning_rate)))
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
-        '''
+        
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
