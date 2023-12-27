@@ -85,6 +85,7 @@ def main():
         for epoch in range(args.epochs):
             torch.cuda.empty_cache()
             train_stats = train_one_epoch(data_loader_train, model, criterion, optimizer, args.loss, device)
+            torch.save(model.state_dict(), basic_model_path)
             torch.cuda.empty_cache()
             if epoch % args.print_step == 0:
                 test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
@@ -100,8 +101,7 @@ def main():
                 stats.append(log_stats)
                 df = pd.DataFrame(stats)
                 df.to_csv("./logs/%s_trigger%d.csv" % (args.dataset, args.trigger_label), index=False, encoding='utf-8')
-            # save model 
-            torch.save(model.state_dict(), basic_model_path)
+            
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
