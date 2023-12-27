@@ -19,6 +19,19 @@ class TriggerHandler(object):
         img.paste(self.trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
         return img
 
+class TriggerHandler_Class_Distinct_Label(object):
+
+    def __init__(self, trigger_path, trigger_size, trigger_label, img_width, img_height):
+        self.trigger_size = trigger_size
+        self.img_width = img_width
+        self.img_height = img_height
+
+    def put_trigger(self, img, label):
+        trigger_img = Image.open(str(label)+'.png').convert('RGB')
+        trigger_img = trigger_img.resize((self.trigger_size, self.trigger_size))        
+        img.paste(trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
+        return img
+
 class CIFAR10Poison(CIFAR10):
 
     def __init__(
@@ -33,8 +46,12 @@ class CIFAR10Poison(CIFAR10):
         super().__init__(root, train=train, transform=transform, target_transform=target_transform, download=download)
 
         self.width, self.height, self.channels = self.__shape_info__()
-
-        self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        self.class_distinct_trigger = args.class_distinct_trigger
+        if args.class_distinct_trigger:
+            self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        else:
+            self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        
         self.poisoning_rate = args.poisoning_rate if train else 1.0
         '''
         indices = range(len(self.targets))
@@ -60,10 +77,14 @@ class CIFAR10Poison(CIFAR10):
         # NOTE: According to the threat model, the trigger should be put on the image before transform.
         # (The attacker can only poison the dataset)
         if index in self.poi_indices:
-            img = self.trigger_handler.put_trigger(img)
             if not self.clean_label:
                 target = self.trigger_handler.trigger_label
-
+            
+            if self.class_distinct_trigger:
+                img = self.trigger_handler.put_trigger(img, target)
+            else:
+                img = self.trigger_handler.put_trigger(img)
+                
         if self.transform is not None:
             img = self.transform(img)
 

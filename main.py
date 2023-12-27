@@ -34,6 +34,7 @@ parser.add_argument('--trigger_path', default="./triggers/trigger_white.png", he
 parser.add_argument('--trigger_size', type=int, default=5, help='Trigger Size (int, default: 5)')
 parser.add_argument('--print_step', type=int, default=2, help='')
 parser.add_argument('--clean_label', action='store_true', help='')
+parser.add_argument('--class_distinct_trigger', action='store_true', help='')
 
 args = parser.parse_args()
 
