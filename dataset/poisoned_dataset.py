@@ -46,7 +46,7 @@ class CIFAR10Poison(CIFAR10):
     ) -> None:
         super().__init__(root, train=train, transform=transform, target_transform=target_transform, download=download)
 
-        # self.width, self.height, self.channels = self.__shape_info__()
+        self.width, self.height, self.channels = self.__shape_info__()
         self.class_distinct_trigger = args.class_distinct_trigger
         self.width = args.image_width
         self.height = args.image_height
@@ -162,7 +162,7 @@ class CIFAR100Poison(CIFAR100):
     ) -> None:
         super().__init__(root, train=train, transform=transform, target_transform=target_transform, download=download)
 
-        # self.width, self.height, self.channels = self.__shape_info__()
+        self.width, self.height, self.channels = self.__shape_info__()
         self.width = args.image_width
         self.height = args.image_height
         if args.class_distinct_trigger:
