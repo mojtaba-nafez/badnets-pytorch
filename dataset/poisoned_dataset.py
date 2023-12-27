@@ -183,7 +183,6 @@ class CIFAR100Poison(CIFAR100):
         # (The attacker can only poison the dataset)
         if index in self.poi_indices:
             
-            img = self.trigger_handler.put_trigger(img)
             if self.class_distinct_trigger:
                 img = self.trigger_handler.put_trigger(img, random.choice(tgt))
             else:
