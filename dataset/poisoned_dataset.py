@@ -160,8 +160,11 @@ class CIFAR100Poison(CIFAR100):
         super().__init__(root, train=train, transform=transform, target_transform=target_transform, download=download)
 
         self.width, self.height, self.channels = self.__shape_info__()
-
-        self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        if args.class_distinct_trigger:
+            self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        else:
+            self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        # self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         self.poisoning_rate = args.poisoning_rate if train else 1.0
         indices = range(len(self.targets))
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
@@ -175,11 +178,17 @@ class CIFAR100Poison(CIFAR100):
     def __getitem__(self, index):
         img, target = self.data[index], self.targets[index]
         img = Image.fromarray(img)
+        tgt = [i for i in range(10)]
         # NOTE: According to the threat model, the trigger should be put on the image before transform.
         # (The attacker can only poison the dataset)
         if index in self.poi_indices:
-            target = self.trigger_handler.trigger_label
+            
             img = self.trigger_handler.put_trigger(img)
+            if self.class_distinct_trigger:
+                img = self.trigger_handler.put_trigger(img, random.choice(tgt))
+            else:
+                img = self.trigger_handler.put_trigger(img)
+                
 
         if self.transform is not None:
             img = self.transform(img)
