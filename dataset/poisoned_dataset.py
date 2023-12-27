@@ -62,7 +62,7 @@ class CIFAR10Poison(CIFAR10):
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         '''
         import numpy as np
-        self.poi_indices = list(np.where(self.targets==1)[0])
+        self.poi_indices = list(np.where(np.array(self.targets)==1)[0])
         print("self.poi_indices: ", self.poi_indices)
         '''
         import numpy as np
