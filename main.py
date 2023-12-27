@@ -68,7 +68,6 @@ def main():
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optimizer_picker(args.optimizer, model.parameters(), lr=args.lr)
     basic_model_path = "./checkpoints/badnet-%s.pth" % args.dataset
-    torch.save(model.state_dict(), basic_model_path)
 
     start_time = time.time()
     if args.load_local:
