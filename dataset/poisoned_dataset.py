@@ -50,7 +50,6 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
-        print("++++ self.poi_indices:", self.poi_indices)
 
     def __shape_info__(self):
         return self.data.shape[1:]
@@ -61,10 +60,9 @@ class CIFAR10Poison(CIFAR10):
         # NOTE: According to the threat model, the trigger should be put on the image before transform.
         # (The attacker can only poison the dataset)
         if index in self.poi_indices:
-            print("Yess!")
+            img = self.trigger_handler.put_trigger(img)
             if not self.clean_label:
                 target = self.trigger_handler.trigger_label
-            img = self.trigger_handler.put_trigger(img)
 
         if self.transform is not None:
             img = self.transform(img)
