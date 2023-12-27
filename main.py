@@ -31,10 +31,12 @@ parser.add_argument('--device', default='cpu', help='device to use for training 
 parser.add_argument('--poisoning_rate', type=float, default=0.1, help='poisoning portion (float, range from 0 to 1, default: 0.1)')
 parser.add_argument('--trigger_label', type=int, default=1, help='The NO. of trigger label (int, range from 0 to 10, default: 0)')
 parser.add_argument('--trigger_path', default="./triggers/trigger_white.png", help='Trigger Path (default: ./triggers/trigger_white.png)')
-parser.add_argument('--trigger_size', type=int, default=5, help='Trigger Size (int, default: 5)')
+parser.add_argument('--trigger_size', type=int, default=35, help='Trigger Size (int, default: 5)')
 parser.add_argument('--print_step', type=int, default=2, help='')
 parser.add_argument('--clean_label', action='store_true', help='')
 parser.add_argument('--class_distinct_trigger', action='store_true', help='')
+parser.add_argument('--image_width', type=int, default=224, help='')
+parser.add_argument('--image_height', type=int, default=224, help='')
 
 args = parser.parse_args()
 

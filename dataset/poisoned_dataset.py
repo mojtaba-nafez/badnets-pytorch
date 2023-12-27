@@ -46,8 +46,10 @@ class CIFAR10Poison(CIFAR10):
     ) -> None:
         super().__init__(root, train=train, transform=transform, target_transform=target_transform, download=download)
 
-        self.width, self.height, self.channels = self.__shape_info__()
+        # self.width, self.height, self.channels = self.__shape_info__()
         self.class_distinct_trigger = args.class_distinct_trigger
+        self.width = args.image_width
+        self.height = args.image_height
         if args.class_distinct_trigger:
             self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         else:
@@ -75,6 +77,7 @@ class CIFAR10Poison(CIFAR10):
     def __getitem__(self, index):
         img, target = self.data[index], self.targets[index]
         img = Image.fromarray(img)
+        img = img.resize((self.width, self.height))
         # NOTE: According to the threat model, the trigger should be put on the image before transform.
         # (The attacker can only poison the dataset)
         if index in self.poi_indices:
@@ -159,7 +162,9 @@ class CIFAR100Poison(CIFAR100):
     ) -> None:
         super().__init__(root, train=train, transform=transform, target_transform=target_transform, download=download)
 
-        self.width, self.height, self.channels = self.__shape_info__()
+        # self.width, self.height, self.channels = self.__shape_info__()
+        self.width = args.image_width
+        self.height = args.image_height
         if args.class_distinct_trigger:
             self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         else:
@@ -179,6 +184,7 @@ class CIFAR100Poison(CIFAR100):
     def __getitem__(self, index):
         img, target = self.data[index], self.targets[index]
         img = Image.fromarray(img)
+        img = img.resize((self.width, self.height))
         tgt = [i for i in range(10)]
         # NOTE: According to the threat model, the trigger should be put on the image before transform.
         # (The attacker can only poison the dataset)
