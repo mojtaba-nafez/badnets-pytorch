@@ -24,12 +24,14 @@ class VIT_BadNet(torch.nn.Module):
         self.backbone = models.vit_b_16(pretrained=pretrained)
         self.backbone.heads = torch.nn.Identity()
         self.output = torch.nn.Linear(768, output_num)
+        '''
         num = 76
         i = 0
         for param in self.backbone.parameters():
             if i<num:
                 param.requires_grad = False
             i+=1
+        '''
     def forward(self, x):
         # x = self.norm(x)
         x = self.backbone(x)
