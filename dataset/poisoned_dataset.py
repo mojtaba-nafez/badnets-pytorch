@@ -171,6 +171,7 @@ class CIFAR100Poison(CIFAR100):
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         for i in range(len(self.targets)):
             self.targets[i] = 0
+        self.class_distinct_trigger = args.class_distinct_trigger
 
     def __shape_info__(self):
         return self.data.shape[1:]
