@@ -61,6 +61,7 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         '''
+        '''
         import numpy as np
         unique_values = np.unique(self.targets)
         self.poi_indices = []
@@ -68,6 +69,9 @@ class CIFAR10Poison(CIFAR10):
             indices = list(np.where(self.targets == value)[0])
             self.poi_indices.append(random.sample(indices, k=int(len(indices) * self.poisoning_rate)))
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
+        '''
+        self.poi_indices = list(np.where(self.targets == 1)[0])
+
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
@@ -191,8 +195,8 @@ class CIFAR100Poison(CIFAR100):
         if index in self.poi_indices:
             
             if self.class_distinct_trigger:
-                # img = self.trigger_handler.put_trigger(img, random.choice(tgt))
-                img = self.trigger_handler.put_trigger(img, 0)
+                img = self.trigger_handler.put_trigger(img, random.choice(tgt))
+                # img = self.trigger_handler.put_trigger(img, 0)
             else:
                 img = self.trigger_handler.put_trigger(img)
                 
