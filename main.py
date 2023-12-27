@@ -14,7 +14,7 @@ from deeplearning import evaluate_badnets, optimizer_picker, train_one_epoch, ev
 from models import BadNet
 
 parser = argparse.ArgumentParser(description='Reproduce the basic backdoor attack in "Badnets: Identifying vulnerabilities in the machine learning model supply chain".')
-parser.add_argument('--dataset', default='MNIST', help='Which dataset to use (MNIST or CIFAR10, default: MNIST)')
+parser.add_argument('--dataset', default='CIFAR10', help='Which dataset to use (MNIST or CIFAR10, default: MNIST)')
 parser.add_argument('--model', default='resnet18', help='resnet18, vit, simple_conv')
 parser.add_argument('--nb_classes', default=10, type=int, help='number of the classification types')
 parser.add_argument('--load_local', action='store_true', help='train model or directly load model (default true, if you add this param, then load trained local model to evaluate the performance)')
