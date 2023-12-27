@@ -30,6 +30,7 @@ class TriggerHandler_Class_Distinct_Label(object):
     def put_trigger(self, img, label):
         trigger_img = Image.open('./triggers/'+str(label)+'.png').convert('RGB')
         trigger_img = trigger_img.resize((self.trigger_size, self.trigger_size))        
+        print("++++----: trigger_img: ---: ", trigger_img.shape)
         img.paste(trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
         return img
 
