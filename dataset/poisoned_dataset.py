@@ -191,7 +191,8 @@ class CIFAR100Poison(CIFAR100):
         if index in self.poi_indices:
             
             if self.class_distinct_trigger:
-                img = self.trigger_handler.put_trigger(img, random.choice(tgt))
+                # img = self.trigger_handler.put_trigger(img, random.choice(tgt))
+                img = self.trigger_handler.put_trigger(img, 0)
             else:
                 img = self.trigger_handler.put_trigger(img)
                 
