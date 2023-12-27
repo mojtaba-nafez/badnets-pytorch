@@ -74,10 +74,10 @@ def main():
     if args.load_local:
         print("## Load model from : %s" % basic_model_path)
         model.load_state_dict(torch.load(basic_model_path), strict=True)
-        test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
+        # test_stats = evaluate_badnets(data_loader_val_clean, data_loader_val_poisoned, model, device)
         ood_test_stats = evaluate_badnets_ood(data_loader_val_clean_ood, data_loader_val_poisoned_ood, model, device)
-        print(f"cifar10 classifer: Test Clean Accuracy(TCA): {test_stats['clean_acc']:.4f}")
-        print(f"cifar10 classifer: Attack Success Rate(ASR): {test_stats['asr']:.4f}")
+        # print(f"cifar10 classifer: Test Clean Accuracy(TCA): {test_stats['clean_acc']:.4f}")
+        # print(f"cifar10 classifer: Attack Success Rate(ASR): {test_stats['asr']:.4f}")
         print(f"OOD(cifar10 versus 100): Test Clean AUC(TCA): {ood_test_stats['clean_auc']:.4f} -- Test ADV AUC(ASR): {ood_test_stats['adv_auc']:.4f}")
     else:
         print(f"Start training for {args.epochs} epochs")
