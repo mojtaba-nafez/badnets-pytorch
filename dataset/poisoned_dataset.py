@@ -16,7 +16,7 @@ class TriggerHandler(object):
         self.img_height = img_height
 
     def put_trigger(self, img):
-        img.paste(self.trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
+        img.paste(self.trigger_img, (self.img_width//2 - self.trigger_size, self.img_height//2 - self.trigger_size))
         return img
 
 class TriggerHandler_Class_Distinct_Label(object):
@@ -54,7 +54,6 @@ class CIFAR10Poison(CIFAR10):
             self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         else:
             self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
-        
         self.poisoning_rate = args.poisoning_rate if train else 1.0
         '''
         indices = range(len(self.targets))
