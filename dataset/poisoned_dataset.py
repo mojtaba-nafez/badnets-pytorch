@@ -16,7 +16,7 @@ class TriggerHandler(object):
         self.img_height = img_height
 
     def put_trigger(self, img):
-        img.paste(self.trigger_img, (self.img_width//2 - self.trigger_size, self.img_height//2 - self.trigger_size))
+        img.paste(self.trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
         return img
 
 class TriggerHandler_Class_Distinct_Label(object):
@@ -30,7 +30,7 @@ class TriggerHandler_Class_Distinct_Label(object):
     def put_trigger(self, img, label):
         trigger_img = Image.open('./triggers/'+str(label)+'.png').convert('RGB')
         trigger_img = trigger_img.resize((self.trigger_size, self.trigger_size))        
-        img.paste(trigger_img, (self.img_width//2 - self.trigger_size, self.img_height//2 - self.trigger_size))
+        img.paste(trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
         return img
 
 class CIFAR10Poison(CIFAR10):
@@ -60,7 +60,7 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         '''
-        '''
+        
         import numpy as np
         self.poi_indices = list(np.where(np.array(self.targets)==1)[0])
         print("self.poi_indices: ", self.poi_indices)
@@ -72,7 +72,7 @@ class CIFAR10Poison(CIFAR10):
             indices = list(np.where(self.targets == value)[0])
             self.poi_indices.append(random.sample(indices, k=int(len(indices) * self.poisoning_rate)))
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
-        
+        '''
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
