@@ -18,8 +18,9 @@ def build_poisoned_training_set(is_train, args):
 
     if args.dataset == 'CIFAR10':
         if args.exposure_training :
-            clean_trainset = datasets.CIFAR10(root=args.data_path, train=True,  download=True, transform=transform)
-            exposure_dataset = ImageNetExposure(args=args, root='./tiny-imagenet-200', count=5000, transform=transform)
+            # clean_trainset = datasets.CIFAR10(root=args.data_path, train=True,  download=True, transform=transform)
+            trainset = CIFAR10Poison(args, args.data_path, train=is_train, download=True, transform=transform, count=2500)
+            exposure_dataset = ImageNetExposure(args=args, root='./tiny-imagenet-200', count=2500, transform=transform)
             trainset = torch.utils.data.ConcatDataset([clean_trainset, exposure_dataset])
         else:
             trainset = CIFAR10Poison(args, args.data_path, train=is_train, download=True, transform=transform)

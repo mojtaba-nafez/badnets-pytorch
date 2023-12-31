@@ -92,6 +92,8 @@ class CIFAR10Poison(CIFAR10):
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
         download: bool = False,
+        count= -1,
+        class_number=10,
     ) -> None:
         super().__init__(root, train=train, transform=transform, target_transform=target_transform, download=download)
 
@@ -109,19 +111,29 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         '''
-        
+        '''
         import numpy as np
         self.poi_indices = list(np.where(np.array(self.targets)==1)[0])
-        print("self.poi_indices: ", self.poi_indices)
         '''
+        
         import numpy as np
         unique_values = np.unique(self.targets)
         self.poi_indices = []
+        if count != -1:
+            fc = [int(count / class_number) for i in range(class_number)]
+            if sum(fc) != count:
+                fc[0] += abs(count - sum(fc))    
+
         for value in unique_values:
             indices = list(np.where(self.targets == value)[0])
-            self.poi_indices.append(random.sample(indices, k=int(len(indices) * self.poisoning_rate)))
+            poison_tmp = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
+            if count!=-1:
+                poison_tmp = poison_tmp[:count]
+            self.poi_indices.append(poison_tmp)
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
-        '''
+        
+        if count != -1:
+            self.poi_indices = self.poi_indices[:count]
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
