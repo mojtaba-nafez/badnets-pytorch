@@ -128,12 +128,10 @@ class CIFAR10Poison(CIFAR10):
             indices = list(np.where(self.targets == value)[0])
             poison_tmp = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
             if count!=-1:
-                poison_tmp = poison_tmp[:count]
+                poison_tmp = poison_tmp[:fc[value]]
+                print("len(poison_tmp): ", len(poison_tmp))
             self.poi_indices.append(poison_tmp)
-        self.poi_indices = np.array(self.poi_indices).flatten().tolist()
-        
-        if count != -1:
-            self.poi_indices = self.poi_indices[:count]
+        self.poi_indices = np.array(self.poi_indices).flatten().tolist() 
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
