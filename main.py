@@ -65,7 +65,7 @@ def main():
     data_loader_val_clean    = DataLoader(dataset_val_clean,     batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
     data_loader_val_poisoned = DataLoader(dataset_val_poisoned,  batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers) # shuffle 随机化
 
-    model = BadNet(input_channels=dataset_train.channels, output_num=args.nb_classes, model=args.model).to(device)
+    model = BadNet(input_channels=3, output_num=args.nb_classes, model=args.model).to(device)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optimizer_picker(args.optimizer, model.parameters(), lr=args.lr)
     basic_model_path = "./checkpoints/badnet-%s.pth" % args.dataset
