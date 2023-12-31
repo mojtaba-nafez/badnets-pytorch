@@ -42,13 +42,13 @@ class ImageNetExposure(Dataset):
         
         target = self.label[index]
         if self.class_distinct_trigger:
-            img = self.trigger_handler.put_trigger(img, target)
+            img = self.trigger_handler.put_trigger(img, 1)
         else:
             img = self.trigger_handler.put_trigger(img)
                 
         if self.transform is not None:
             img = self.transform(img)
-        return img, target
+        return img, 1
 
     def __len__(self):
         return len(self.image_files)
@@ -59,7 +59,7 @@ class TriggerHandler(object):
     def __init__(self, trigger_path, trigger_size, trigger_label, img_width, img_height):
         self.trigger_img = Image.open(trigger_path).convert('RGB')
         self.trigger_size = trigger_size
-        self.trigger_img = self.trigger_img.resize((trigger_size, trigger_size))        
+        self.trigger_img = self.trigger_img.resize((trigger_size, trigger_size))
         self.trigger_label = trigger_label
         self.img_width = img_width
         self.img_height = img_height
@@ -111,11 +111,11 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         '''
-        '''
+        
         import numpy as np
         self.poi_indices = list(np.where(np.array(self.targets)==1)[0])
+        self.poi_indices = self.poi_indices[count]
         '''
-        
         import numpy as np
         unique_values = np.unique(self.targets)
         self.poi_indices = []
@@ -129,9 +129,9 @@ class CIFAR10Poison(CIFAR10):
             poison_tmp = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
             if count != -1 and train:
                 poison_tmp = poison_tmp[:fc[value]]
-                print("len(poison_tmp): ", len(poison_tmp))
             self.poi_indices.append(poison_tmp)
-        self.poi_indices = np.array(self.poi_indices).flatten().tolist() 
+        self.poi_indices = np.array(self.poi_indices).flatten().tolist()
+        ''' 
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
