@@ -35,6 +35,7 @@ parser.add_argument('--trigger_size', type=int, default=35, help='Trigger Size (
 parser.add_argument('--print_step', type=int, default=2, help='')
 parser.add_argument('--clean_label', action='store_true', help='')
 parser.add_argument('--class_distinct_trigger', action='store_true', help='')
+parser.add_argument('--exposure_training', action='store_true', help='')
 parser.add_argument('--image_width', type=int, default=224, help='')
 parser.add_argument('--image_height', type=int, default=224, help='')
 

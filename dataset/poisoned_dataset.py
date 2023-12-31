@@ -5,6 +5,55 @@ from PIL import Image
 from torchvision.datasets import CIFAR10, MNIST, CIFAR100
 import os 
 
+from torch.utils.data import DataLoader, Dataset
+from glob import glob
+import numpy as np
+
+
+class ImageNetExposure(Dataset):
+    def __init__(self, args, root, count, transform=None, class_number=10):
+        self.transform = transform
+        image_files = sorted(glob(os.path.join(root, 'train', "*", "images", "*.JPEG")))
+        self.image_files = image_files[:count]
+
+        fc = [int(count / class_number) for i in range(class_number)]
+        if sum(fc) != count:
+                fc[0] += abs(count - sum(fc))    
+        self.label = []
+        for i in range(class_number):
+            self.label = self.label + ([i]*fc[i])
+        print(np.unique(self.label, return_counts=True))
+        self.width = args.image_width
+        self.height = args.image_height
+        self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        if args.class_distinct_trigger:
+            self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        else:
+            self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        self.poisoning_rate = 1.0
+        self.class_distinct_trigger = args.class_distinct_trigger
+
+
+    def __getitem__(self, index):
+        image_file = self.image_files[index]
+        img = Image.open(image_file)
+        img = img.convert('RGB')
+        img = img.resize((self.width, self.height))
+        
+        target = self.label[index]
+        if self.class_distinct_trigger:
+            img = self.trigger_handler.put_trigger(img, target)
+        else:
+            img = self.trigger_handler.put_trigger(img)
+                
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, target
+
+    def __len__(self):
+        return len(self.image_files)
+
+
 class TriggerHandler(object):
 
     def __init__(self, trigger_path, trigger_size, trigger_label, img_width, img_height):

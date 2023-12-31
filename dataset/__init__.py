@@ -1,4 +1,4 @@
-from .poisoned_dataset import CIFAR10Poison, MNISTPoison, CIFAR100Poison
+from .poisoned_dataset import CIFAR10Poison, MNISTPoison, CIFAR100Poison, ImageNetExposure
 from torchvision import datasets, transforms
 import torch 
 import os 
@@ -17,7 +17,12 @@ def build_poisoned_training_set(is_train, args):
     print("Transform = ", transform)
 
     if args.dataset == 'CIFAR10':
-        trainset = CIFAR10Poison(args, args.data_path, train=is_train, download=True, transform=transform)
+        if args.exposure_training :
+            clean_trainset = datasets.CIFAR10(root=args.data_path, train=True,  download=True, transform=transform)
+            exposure_dataset = ImageNetExposure(args=args, root='./tiny-imagenet-200', count=5000, transform=transform)
+            trainset = torch.utils.data.ConcatDataset([clean_trainset, exposure_dataset])
+        else:
+            trainset = CIFAR10Poison(args, args.data_path, train=is_train, download=True, transform=transform)
         nb_classes = 10
     elif args.dataset == 'MNIST':
         trainset = MNISTPoison(args, args.data_path, train=is_train, download=True, transform=transform)
