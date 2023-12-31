@@ -119,7 +119,7 @@ class CIFAR10Poison(CIFAR10):
         import numpy as np
         unique_values = np.unique(self.targets)
         self.poi_indices = []
-        if count != -1:
+        if count != -1 and train:
             fc = [int(count / class_number) for i in range(class_number)]
             if sum(fc) != count:
                 fc[0] += abs(count - sum(fc))    
@@ -127,7 +127,7 @@ class CIFAR10Poison(CIFAR10):
         for value in unique_values:
             indices = list(np.where(self.targets == value)[0])
             poison_tmp = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
-            if count!=-1:
+            if count != -1 and train:
                 poison_tmp = poison_tmp[:fc[value]]
                 print("len(poison_tmp): ", len(poison_tmp))
             self.poi_indices.append(poison_tmp)
