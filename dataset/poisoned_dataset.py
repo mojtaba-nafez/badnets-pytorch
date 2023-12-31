@@ -114,7 +114,7 @@ class CIFAR10Poison(CIFAR10):
         
         import numpy as np
         self.poi_indices = list(np.where(np.array(self.targets)==1)[0])
-        self.poi_indices = self.poi_indices[count]
+        self.poi_indices = self.poi_indices[:count]
         '''
         import numpy as np
         unique_values = np.unique(self.targets)
