@@ -13,16 +13,18 @@ import numpy as np
 class Blended_TriggerHandler(object):
 
     def __init__(self, trigger_path, trigger_size, trigger_label, img_width, img_height):
+        trigger_path = "./triggers/hello_kitty.jpeg"
         self.trigger_img = Image.open(trigger_path).convert('RGB')
-        self.trigger_size = trigger_size
+        self.trigger_size = 224
         self.trigger_img = self.trigger_img.resize((trigger_size, trigger_size))
         self.trigger_label = trigger_label
         self.img_width = img_width
         self.img_height = img_height
+        self.trigger_img = np.array(self.trigger_img)
 
     def put_trigger(self, img):
-        img.paste(self.trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
-        return img
+        img =  (0.2 * trigger_img) + 0.8 *(np.array(img)) 
+        return Image.fromarray(img)
 
 
 class TriggerHandler(object):
