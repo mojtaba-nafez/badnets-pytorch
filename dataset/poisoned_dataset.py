@@ -16,7 +16,7 @@ class Blended_TriggerHandler(object):
         trigger_path = "./triggers/hello_kitty.jpeg"
         self.trigger_img = Image.open(trigger_path).convert('RGB')
         self.trigger_size = 224
-        self.trigger_img = self.trigger_img.resize((trigger_size, trigger_size))
+        self.trigger_img = self.trigger_img.resize((224, 224))
         self.trigger_label = trigger_label
         self.img_width = img_width
         self.img_height = img_height
