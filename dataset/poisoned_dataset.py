@@ -23,7 +23,7 @@ class Blended_TriggerHandler(object):
 
     def put_trigger(self, img):
         img = Image.blend(img, self.trigger_img, 0.2)
-        return 
+        return img
 
 
 class TriggerHandler(object):
