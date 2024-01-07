@@ -10,48 +10,19 @@ from glob import glob
 import numpy as np
 
 
-class ImageNetExposure(Dataset):
-    def __init__(self, args, root, count, transform=None, class_number=10):
-        self.transform = transform
-        image_files = sorted(glob(os.path.join(root, 'train', "*", "images", "*.JPEG")))
-        self.image_files = image_files[:count]
+class Blended_TriggerHandler(object):
 
-        fc = [int(count / class_number) for i in range(class_number)]
-        if sum(fc) != count:
-                fc[0] += abs(count - sum(fc))    
-        self.label = []
-        for i in range(class_number):
-            self.label = self.label + ([i]*fc[i])
-        print(np.unique(self.label, return_counts=True))
-        self.width = args.image_width
-        self.height = args.image_height
-        self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
-        if args.class_distinct_trigger:
-            self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
-        else:
-            self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
-        self.poisoning_rate = 1.0
-        self.class_distinct_trigger = args.class_distinct_trigger
+    def __init__(self, trigger_path, trigger_size, trigger_label, img_width, img_height):
+        self.trigger_img = Image.open(trigger_path).convert('RGB')
+        self.trigger_size = trigger_size
+        self.trigger_img = self.trigger_img.resize((trigger_size, trigger_size))
+        self.trigger_label = trigger_label
+        self.img_width = img_width
+        self.img_height = img_height
 
-
-    def __getitem__(self, index):
-        image_file = self.image_files[index]
-        img = Image.open(image_file)
-        img = img.convert('RGB')
-        img = img.resize((self.width, self.height))
-        
-        target = self.label[index]
-        if self.class_distinct_trigger:
-            img = self.trigger_handler.put_trigger(img, 1)
-        else:
-            img = self.trigger_handler.put_trigger(img)
-                
-        if self.transform is not None:
-            img = self.transform(img)
-        return img, 1
-
-    def __len__(self):
-        return len(self.image_files)
+    def put_trigger(self, img):
+        img.paste(self.trigger_img, (self.img_width - self.trigger_size, self.img_height - self.trigger_size))
+        return img
 
 
 class TriggerHandler(object):
@@ -103,6 +74,8 @@ class CIFAR10Poison(CIFAR10):
         self.height = args.image_height
         if args.class_distinct_trigger:
             self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        elif arg.blended_trigger :
+            self.trigger_handler = Blended_TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         else:
             self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         self.poisoning_rate = args.poisoning_rate if train else 1.0
@@ -111,7 +84,7 @@ class CIFAR10Poison(CIFAR10):
         self.poi_indices = random.sample(indices, k=int(len(indices) * self.poisoning_rate))
         print(f"Poison {len(self.poi_indices)} over {len(indices)} samples ( poisoning rate {self.poisoning_rate})")
         '''
-        
+        '''
         import numpy as np
         self.poi_indices = list(np.where(np.array(self.targets)==1)[0])
         self.poi_indices = self.poi_indices[:count]
@@ -131,7 +104,7 @@ class CIFAR10Poison(CIFAR10):
                 poison_tmp = poison_tmp[:fc[value]]
             self.poi_indices.append(poison_tmp)
         self.poi_indices = np.array(self.poi_indices).flatten().tolist()
-        ''' 
+        
         print(f"Poison {len(self.poi_indices)} over {len(self.targets)} samples ( poisoning rate {self.poisoning_rate})")
         self.clean_label = args.clean_label
 
@@ -269,3 +242,47 @@ class CIFAR100Poison(CIFAR100):
 
         return img, 0
 
+
+
+class ImageNetExposure(Dataset):
+    def __init__(self, args, root, count, transform=None, class_number=10):
+        self.transform = transform
+        image_files = sorted(glob(os.path.join(root, 'train', "*", "images", "*.JPEG")))
+        self.image_files = image_files[:count]
+
+        fc = [int(count / class_number) for i in range(class_number)]
+        if sum(fc) != count:
+                fc[0] += abs(count - sum(fc))    
+        self.label = []
+        for i in range(class_number):
+            self.label = self.label + ([i]*fc[i])
+        print(np.unique(self.label, return_counts=True))
+        self.width = args.image_width
+        self.height = args.image_height
+        self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        if args.class_distinct_trigger:
+            self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        else:
+            self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        self.poisoning_rate = 1.0
+        self.class_distinct_trigger = args.class_distinct_trigger
+
+
+    def __getitem__(self, index):
+        image_file = self.image_files[index]
+        img = Image.open(image_file)
+        img = img.convert('RGB')
+        img = img.resize((self.width, self.height))
+        
+        target = self.label[index]
+        if self.class_distinct_trigger:
+            img = self.trigger_handler.put_trigger(img, target)
+        else:
+            img = self.trigger_handler.put_trigger(img)
+                
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, target
+
+    def __len__(self):
+        return len(self.image_files)
