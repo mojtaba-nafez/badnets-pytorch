@@ -205,6 +205,8 @@ class CIFAR100Poison(CIFAR100):
         self.height = args.image_height
         if args.class_distinct_trigger:
             self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+        elif args.blended_trigger :
+            self.trigger_handler = Blended_TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         else:
             self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         # self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
