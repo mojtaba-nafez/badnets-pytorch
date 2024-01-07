@@ -23,6 +23,8 @@ class Blended_TriggerHandler(object):
         self.trigger_img = np.array(self.trigger_img)
 
     def put_trigger(self, img):
+        print(trigger_img)
+        print(np.array(img))
         img =  (0.2 * self.trigger_img) + 0.8 *(np.array(img)) 
         return Image.fromarray(img)
 
