@@ -39,6 +39,7 @@ parser.add_argument('--class_distinct_trigger', action='store_true', help='')
 parser.add_argument('--exposure_training', action='store_true', help='')
 parser.add_argument('--image_width', type=int, default=224, help='')
 parser.add_argument('--image_height', type=int, default=224, help='')
+parser.add_argument('--mixup_rate', type=float, default=0.2, help='')
 
 args = parser.parse_args()
 

@@ -12,7 +12,7 @@ import numpy as np
 
 class Blended_TriggerHandler(object):
 
-    def __init__(self, trigger_path, trigger_size, trigger_label, img_width, img_height):
+    def __init__(self, trigger_path, trigger_size, trigger_label, img_width, img_height, mixup_rate):
         trigger_path = "./triggers/hello_kitty.jpeg"
         self.trigger_img = Image.open(trigger_path).convert('RGB')
         self.trigger_size = 224
@@ -20,9 +20,10 @@ class Blended_TriggerHandler(object):
         self.trigger_label = trigger_label
         self.img_width = img_width
         self.img_height = img_height
+        self.mixup_rate = mixup_rate
 
     def put_trigger(self, img):
-        img = Image.blend(img, self.trigger_img, 0.2)
+        img = Image.blend(img, self.trigger_img, self.mixup_rate)
         return img
 
 
@@ -76,7 +77,7 @@ class CIFAR10Poison(CIFAR10):
         if args.class_distinct_trigger:
             self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         elif args.blended_trigger :
-            self.trigger_handler = Blended_TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+            self.trigger_handler = Blended_TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height, mixup_rate=args.mixup_rate)
         else:
             self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         self.poisoning_rate = args.poisoning_rate if train else 1.0
@@ -206,7 +207,7 @@ class CIFAR100Poison(CIFAR100):
         if args.class_distinct_trigger:
             self.trigger_handler = TriggerHandler_Class_Distinct_Label( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         elif args.blended_trigger :
-            self.trigger_handler = Blended_TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
+            self.trigger_handler = Blended_TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height, mixup_rate=args.mixup_rate)
         else:
             self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
         # self.trigger_handler = TriggerHandler( args.trigger_path, args.trigger_size, args.trigger_label, self.width, self.height)
