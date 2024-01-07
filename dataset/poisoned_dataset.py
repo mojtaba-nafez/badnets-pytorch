@@ -20,13 +20,10 @@ class Blended_TriggerHandler(object):
         self.trigger_label = trigger_label
         self.img_width = img_width
         self.img_height = img_height
-        self.trigger_img = np.array(self.trigger_img)
 
     def put_trigger(self, img):
-        print(self.trigger_img[0])
-        print(np.array(img)[0])
-        img =  (0.2 * self.trigger_img) + 0.8 *(np.array(img)) 
-        return Image.fromarray(img)
+        img = PIL.Image.blend(img, self.trigger_img, 0.2)
+        return 
 
 
 class TriggerHandler(object):
