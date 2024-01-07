@@ -22,7 +22,7 @@ class Blended_TriggerHandler(object):
         self.img_height = img_height
 
     def put_trigger(self, img):
-        img = PIL.Image.blend(img, self.trigger_img, 0.2)
+        img = Image.blend(img, self.trigger_img, 0.2)
         return 
 
 
