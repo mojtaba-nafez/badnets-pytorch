@@ -3,6 +3,19 @@ from torchvision import datasets, transforms
 import torch 
 import os 
 
+def count_unique_labels_of_dataset(dataset, dataset_name):
+    label_counts = {}
+
+    # Enumerate through the train_dataset
+    for i, (data, label) in enumerate(dataset):
+        # Count the occurrences of each label
+        label_counts[label] = label_counts.get(label, 0) + 1
+
+    # Print the count of unique labels
+    print(f"\nCount of Unique Labels of {dataset_name}:")
+    for label, count in label_counts.items():
+        print(f"{label}: {count}")
+
 def build_init_data(dataname, download, dataset_path):
     if dataname == 'MNIST':
         train_data = datasets.MNIST(root=dataset_path, train=True, download=download)
@@ -22,6 +35,12 @@ def build_poisoned_training_set(is_train, args):
             clean_trainset = CIFAR10Poison(args, args.data_path, train=is_train, download=True, transform=transform, count=2500)
             exposure_dataset = ImageNetExposure(args=args, root='./tiny-imagenet-200', count=2500, transform=transform)
             trainset = torch.utils.data.ConcatDataset([clean_trainset, exposure_dataset])
+
+            print(f"len(clean_trainset): {len(clean_trainset)}")
+            count_unique_labels_of_dataset(clean_trainset, "clean_trainset")
+
+            print(f"len(exposure_dataset): {len(exposure_dataset)}")
+            count_unique_labels_of_dataset(exposure_dataset, "exposure_dataset")
         else:
             trainset = CIFAR10Poison(args, args.data_path, train=is_train, download=True, transform=transform)
         nb_classes = 10
@@ -105,6 +124,21 @@ def build_ood_testset(is_train, args):
         testset_clean = torch.utils.data.ConcatDataset([testset_clean_10, testset_clean_100])
         testset_poisoned_100 = CIFAR100Poison(args, args.data_path, train=is_train, download=True, transform=transform)
         testset_poisoned = torch.utils.data.ConcatDataset([testset_clean_10, testset_poisoned_100])
+
+        print(f"len(testset_clean_10): {len(testset_clean_10)}")
+        count_unique_labels_of_dataset(testset_clean_10, "testset_clean_10")
+
+        print(f"len(testset_clean_100): {len(testset_clean_100)}")
+        count_unique_labels_of_dataset(testset_clean_100, "testset_clean_100")
+
+        print(f"len(testset_poisoned_100): {len(testset_poisoned_100)}")
+        count_unique_labels_of_dataset(testset_poisoned_100, "testset_poisoned_100")
+
+        print(f"len(testset_clean): {len(testset_clean)}")
+        count_unique_labels_of_dataset(testset_clean, "testset_clean")
+
+        print(f"len(testset_poisoned): {len(testset_poisoned)}")
+        count_unique_labels_of_dataset(testset_poisoned, "testset_poisoned")
 
         nb_classes = 10
     elif args.dataset == 'MNIST':

@@ -43,6 +43,19 @@ parser.add_argument('--mixup_rate', type=float, default=0.2, help='')
 
 args = parser.parse_args()
 
+def count_unique_labels_of_dataset(dataset, dataset_name):
+    label_counts = {}
+
+    # Enumerate through the train_dataset
+    for i, (data, label) in enumerate(dataset):
+        # Count the occurrences of each label
+        label_counts[label] = label_counts.get(label, 0) + 1
+
+    # Print the count of unique labels
+    print(f"\nCount of Unique Labels of {dataset_name}:")
+    for label, count in label_counts.items():
+        print(f"{label}: {count}")
+
 def main():
     print("{}".format(args).replace(', ', ',\n'))
 
@@ -57,8 +70,25 @@ def main():
 
     print("\n# load dataset: %s " % args.dataset)
     dataset_train, args.nb_classes = build_poisoned_training_set(is_train=True, args=args)
+    print(f"len(dataset_train): {len(dataset_train)}")
+    count_unique_labels_of_dataset(dataset_train, "dataset_train")
+    print(f"args.nb_classes: {args.nb_classes}")
+
     dataset_val_clean, dataset_val_poisoned = build_testset(is_train=False, args=args)
+
+    print(f"len(dataset_val_clean): {len(dataset_val_clean)}")
+    count_unique_labels_of_dataset(dataset_val_clean, "dataset_val_clean")
+
+    print(f"len(dataset_val_poisoned): {len(dataset_val_poisoned)}")
+    count_unique_labels_of_dataset(dataset_val_poisoned, "dataset_val_poisoned")
+
     dataset_val_clean_ood, dataset_val_poisoned_ood = build_ood_testset(is_train=False, args=args)
+
+    print(f"len(dataset_val_clean_ood): {len(dataset_val_clean_ood)}")
+    count_unique_labels_of_dataset(dataset_val_clean_ood, "dataset_val_clean_ood")
+
+    print(f"len(dataset_val_poisoned_ood): {len(dataset_val_poisoned_ood)}")
+    count_unique_labels_of_dataset(dataset_val_poisoned_ood, "dataset_val_poisoned_ood")
 
     data_loader_val_clean_ood    = DataLoader(dataset_val_clean_ood,     batch_size=args.batch_size, shuffle=True, num_workers=2)
     data_loader_val_poisoned_ood = DataLoader(dataset_val_poisoned_ood,  batch_size=args.batch_size,  shuffle=True, num_workers=2)
